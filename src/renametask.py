@@ -3,7 +3,7 @@ import util
 from collections import OrderedDict
 import json
 
-def example(*args):
+def renametask(*args):
     # function name
     this_name = inspect.currentframe().f_code.co_name
     # args[0] is the input file path
@@ -17,6 +17,7 @@ def example(*args):
     #######
     # code
     output_json = data
+    output_json["cmd.replication_definition"]["tasks"][0]["task"]["name"] = args[1]
     #######
 
     with open(output_file, "w", encoding="utf-8") as f:
