@@ -176,7 +176,4 @@ cython_debug/
 *.mp3
 output/
 temp/
-assets/json
-assets/moby
-clips/
 client.json
