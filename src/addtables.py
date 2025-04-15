@@ -5,38 +5,14 @@ import json
 import pandas as pd
 
 def addtables(*args):
-    # function name
-    this_name = inspect.currentframe().f_code.co_name
-    # args[0] is the input file path
-    input_file = args[0]
-    # generate the output filename
+    this_name   = inspect.currentframe().f_code.co_name
+    input_file  = args[0]
     output_file = util.name_output_file(this_name,input_file,args)
+    output_json = util.load_task_template(input_file=input_file)
 
-    with open(input_file, "r") as f:
-        data = json.load(f, object_pairs_hook=OrderedDict)
-
-    ##########################################
-    output_json = data
-
-    # Existing tables
-    tasks = output_json["cmd.replication_definition"]["tasks"]
-    existing = []
-    
-    first = tasks[0]
-    explicit  = (
-        first
-        .get("source")
-        .get("source_tables")
-        .get("explicit_included_tables",[])
-    )
-    # se explicit_included_tables não existe entao garantimos que ele exista com uma lista vazia. Assim mantemos os pointeiros de referencia
-    if (len(explicit)==0):
-        first["source"]["source_tables"]["explicit_included_tables"] = explicit
-
-    for tbl in explicit:
-        owner = tbl.get("owner")
-        name  = tbl.get("name")
-        existing.append((owner, name))
+    ##############################################################################################################################
+    existing = util.get_existing_tables(task_json=output_json)
+    explicit = output_json["cmd.replication_definition"]["tasks"][0]["source"]["source_tables"]["explicit_included_tables"]
 
     # Tables do insert
     newtables = []
@@ -59,15 +35,6 @@ def addtables(*args):
         newentry["estimated_size"] = 10000
         newentry["validation_sampling_percentage"] = 0
         explicit.append(newentry)
+    ##############################################################################################################################
 
-    #######
-
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(
-            output_json,
-            f,
-            ensure_ascii=False,  # if you want UTF‑8 output
-            indent=4             # pretty‑print with 2‑space indents
-        )
-
-    return output_file
+    return util.save_output(file=output_file,output_json=output_json)

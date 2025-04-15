@@ -4,6 +4,11 @@ import sys
 import importlib.util
 import os
 
+import src.addcolumns
+import src.addtables
+import src.renametask
+import src.renametables
+
 seq = 0
 
 def next_seq():
@@ -84,7 +89,7 @@ def main():
 
     # Finally, print the resulting output file (if any)
     if previous_output:
-        print(f"Final file: {previous_output}")
+        print(f"{previous_output}")
         return previous_output
     
     print(f"No Final file")

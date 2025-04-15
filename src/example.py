@@ -4,27 +4,12 @@ from collections import OrderedDict
 import json
 
 def example(*args):
-    # function name
-    this_name = inspect.currentframe().f_code.co_name
-    # args[0] is the input file path
-    input_file = args[0]
-    # generate the output filename
+    this_name   = inspect.currentframe().f_code.co_name
+    input_file  = args[0]
     output_file = util.name_output_file(this_name,input_file,args)
+    output_json = util.load_task_template(input_file=input_file)
 
-    with open(input_file, "r") as f:
-        data = json.load(f, object_pairs_hook=OrderedDict)
+    ##############################################################################################################################
+    ##############################################################################################################################
 
-    #######
-    # code
-    output_json = data
-    #######
-
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(
-            output_json,
-            f,
-            ensure_ascii=False,  # if you want UTF‑8 output
-            indent=4             # pretty‑print with 2‑space indents
-        )
-
-    return output_file
+    return util.save_output(file=output_file,output_json=output_json)
